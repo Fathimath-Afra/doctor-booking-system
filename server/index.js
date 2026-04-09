@@ -4,6 +4,9 @@ require('dotenv').config();
 
 const { connectRedis } = require('./src/config/redis');
 const supabase = require('./src/config/supabase');
+const authRoutes = require("./src/routes/authRoutes");
+const doctorRoutes = require("./src/routes/doctorRoutes");
+const PORT = process.env.PORT || 5000;
 
 const app = express();
 
@@ -16,7 +19,11 @@ app.get('/test', (req, res) => {
     res.send("Server is running!");
 });
 
-const PORT = process.env.PORT || 5000;
+
+app.use('/api/auth', authRoutes);
+app.use('/api/doctors', doctorRoutes);
+
+
 
 const startServer = async () => {
     
@@ -25,9 +32,9 @@ const startServer = async () => {
     
     const { data, error } = await supabase.from('profiles').select('*').limit(1);
     if (error) {
-        console.log("❌ Supabase Connection Error:", error.message);
+        console.log(" Supabase Connection Error:", error.message);
     } else {
-        console.log("✅ Supabase Connected!");
+        console.log("✅Supabase Connected!");
     }
 
     app.listen(PORT, () => {
